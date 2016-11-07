@@ -1,0 +1,43 @@
+Sword
+Damage one tile ahead.
+1 2
+1
+0
+00000
+00100
+00000
+00000
+00000
+,
+Spear
+Damage two tiles ahead.
+1 2
+2
+8
+00100
+00100
+00000
+00000
+00000
+,
+Axe
+Cause splash damage ahead.
+1 2
+4
+16
+00000
+01110
+00000
+00000
+00000
+,
+Xena
+Damage enemies in the four directions.
+1 2
+8
+24
+00000
+00100
+01010
+00100
+00000

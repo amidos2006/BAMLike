@@ -1,0 +1,59 @@
+Fireball
+Damage enemies infront of the player.
+0 0
+1 2
+0 0
+1
+2
+cc0000
+Directional
+00000
+00000
+00000
+00000
+00000
+,
+Iceshard
+Freeze enemies infront of the player.
+0 0
+1 2
+4 6
+2
+10
+0000cc
+Directional
+00000
+00000
+00000
+00000
+00000
+,
+Shield
+Absorb damage inflected on the player.
+0.4 0.6
+0 0
+4 6
+4
+18
+cccccc
+Self
+00000
+00000
+00000
+00000
+00000
+,
+Poison Explosion
+Posion enemies around the player.
+0 0
+1 2
+4 8
+8
+26
+00cc00
+Area 
+00100
+01110
+11011
+01110
+00100

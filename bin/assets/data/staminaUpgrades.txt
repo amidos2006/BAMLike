@@ -1,0 +1,23 @@
+Move
+Move one tile.
+1
+1
+Directional 1
+,
+Jump
+Jump one tile infront of the player.
+2
+17
+Jump 2
+,
+Dash
+Runs toward certain direction.
+4
+9
+Directional -1
+,
+Teleport
+Teleport to a selected tile.
+8
+25
+Jump -1
