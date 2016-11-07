@@ -58,8 +58,8 @@ class PlayerEntity extends BaseEntity{
         this.currentMana = this.totalMana;
     }
 
-    attack():void{
-        let gameplayState:GameplayState = <GameplayState>this.game.state.getCurrentState();
+    attack(e:BaseEnemyEntity):void{
+        e.takeDamage(1);
     }
 
     castSpell():void{
@@ -73,13 +73,29 @@ class PlayerEntity extends BaseEntity{
         }
     }
 
+    refresh():void{
+        this.currentAttack += 1;
+        this.currentStamina += 1;
+        this.currentMana += 1;
+        if(this.currentAttack > this.totalAttack){
+            this.currentAttack = this.totalAttack;
+        }
+        if(this.currentStamina > this.totalStamina){
+            this.currentStamina = this.totalStamina;
+        }
+        if(this.currentMana > this.totalMana){
+            this.currentMana = this.totalMana;
+        }
+    }
+
     move(direction:Phaser.Point):void{
         let gameplayState:GameplayState = <GameplayState>this.game.state.getCurrentState();
         let playerTile:Phaser.Point = this.getTilePosition();
         for(let i:number=0; i<gameplayState.enemies.length; i++){
             let p:Phaser.Point = gameplayState.enemies[i].getTilePosition();
             if(p.equals(new Phaser.Point(playerTile.x + direction.x, playerTile.y + direction.y))){
-                gameplayState.enemies[i].takeDamage(1);
+                this.attack(gameplayState.enemies[i]);
+                break;
             }
         }
         if(!gameplayState.tileMap.getSolid(playerTile.x + direction.x, playerTile.y + direction.y)){
