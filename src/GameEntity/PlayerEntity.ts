@@ -4,19 +4,23 @@ class PlayerEntity extends BaseEntity{
     private imageLeft:Phaser.Image;
     private imageRight:Phaser.Image;
     
-    private selectedAttack:number;
-    private selectedStamina:number;
-    private selectedMana:number;
+    private attackCost:number[];
+    private staminaCost:number[];
+    private manaCost:number[];
 
-    private currentAttack:number;
-    private currentStamina:number;
-    private currentMana:number;
+    selectedAttack:number;
+    selectedStamina:number;
+    selectedMana:number;
+
+    currentAttack:number;
+    currentStamina:number;
+    currentMana:number;
     currentHealth:number;
 
-    private totalAttack:number;
-    private totalStamina:number;
-    private totalMana:number;
-    private totalHealth:number;
+    totalAttack:number;
+    totalStamina:number;
+    totalMana:number;
+    totalHealth:number;
 
     constructor(game:Phaser.Game, xTile:number, yTile:number){
         super(game);
@@ -49,21 +53,30 @@ class PlayerEntity extends BaseEntity{
 
         this.totalHealth = 10;
         this.totalAttack = 10;
-        this.totalStamina = 10;
+        this.totalStamina = 20;
         this.totalMana = 10;
 
         this.currentHealth = this.totalHealth;
         this.currentAttack = this.totalAttack;
         this.currentStamina = this.totalStamina;
         this.currentMana = this.totalMana;
+
+        this.attackCost = [1, 2, 4];
+        this.staminaCost = [1, 2, 4];
+        this.manaCost = [1, 2, 4];
     }
 
     attack(e:BaseEnemyEntity):void{
-        e.takeDamage(1);
+        if(this.currentAttack > 0){
+            this.currentAttack -= this.attackCost[this.selectedAttack];
+            e.takeDamage(1);
+        }
     }
 
     castSpell():void{
-
+        if(this.currentMana > 0){
+            this.currentMana -= this.manaCost[this.selectedAttack];
+        }
     }
 
     takeDamage(damage:number):void{
@@ -99,8 +112,11 @@ class PlayerEntity extends BaseEntity{
             }
         }
         if(!gameplayState.tileMap.getSolid(playerTile.x + direction.x, playerTile.y + direction.y)){
-            this.x += direction.x * PhasePunk.TILE_SIZE;
-            this.y += direction.y * PhasePunk.TILE_SIZE;
+            if(this.currentStamina > 0){
+                this.currentStamina -= this.staminaCost[this.selectedStamina];
+                this.x += direction.x * PhasePunk.TILE_SIZE;
+                this.y += direction.y * PhasePunk.TILE_SIZE;
+            }
         }
         this.updateGraphics(direction);
         this.clearAround();
@@ -150,6 +166,26 @@ class PlayerEntity extends BaseEntity{
             this.imageRight.alpha = 0;
             
             this.imageDown.alpha = 1;
+        }
+    }
+
+    update():void{
+        super.update();
+
+        if (this.game.input.keyboard.isDown(Phaser.Keyboard.ONE)) {
+            this.selectedAttack += 1;
+            this.selectedAttack %= 3;
+            this.game.input.reset();
+        }
+        if (this.game.input.keyboard.isDown(Phaser.Keyboard.TWO)) {
+            this.selectedStamina += 1;
+            this.selectedStamina %= 3;
+            this.game.input.reset();
+        }
+        if (this.game.input.keyboard.isDown(Phaser.Keyboard.THREE)) {
+            this.selectedMana += 1;
+            this.selectedMana %= 3;
+            this.game.input.reset();
         }
     }
 }

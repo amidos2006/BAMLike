@@ -97,7 +97,7 @@ class GameplayState extends BaseState {
         let data = {
             "mapData": ["40x40", "solid:empty"],
             "roomData": ["equal:4x4:16", "empty:1|solid:2"],
-            "names": ["empty:-1", "solid:-1", "player:1", "enemy:40"],
+            "names": ["empty:-1", "solid:-1", "player:1", "enemy:60"],
             "neighbourhoods": {
                 "plus": "010,101,010",
                 "all": "111,101,111"
@@ -121,7 +121,7 @@ class GameplayState extends BaseState {
                 },
                 {
                     "genData": ["2", "map:-1", "connect:plus:0"],
-                    "rules": ["empty,plus,or,solid<3,enemy:1|empty:50"]
+                    "rules": ["empty,plus,or,solid<3,enemy:1|empty:40"]
                 }
             ]
         };
@@ -168,6 +168,7 @@ class GameplayState extends BaseState {
         this.calculateDijkstra(playerPos.x, playerPos.y);
 
         this.layers[Layer.OBJECT_LAYER].add(this.player);
+        this.layers[Layer.HUD_LAYER].add(new HUDEntity(this.game, 0, 0));
     }
 
     update(): void {
