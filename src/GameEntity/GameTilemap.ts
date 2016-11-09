@@ -51,6 +51,12 @@ class GameTilemap extends Phaser.Tilemap{
                     return true;
                 }
             }
+            for(let i:number=0; i<gameplay.treasures.length; i++){
+                let point:Phaser.Point = gameplay.treasures[i].getTilePosition();
+                if(point.equals(new Phaser.Point(x, y))){
+                    return true;
+                }
+            }
         }
 
         if(x >= 0 && y >= 0 && x < this.getWidth() && y < this.getHeight()){

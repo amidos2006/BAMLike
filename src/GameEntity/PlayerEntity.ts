@@ -53,7 +53,7 @@ class PlayerEntity extends BaseEntity{
 
         this.totalHealth = 10;
         this.totalAttack = 10;
-        this.totalStamina = 20;
+        this.totalStamina = 10;
         this.totalMana = 10;
 
         this.currentHealth = this.totalHealth;
@@ -67,16 +67,37 @@ class PlayerEntity extends BaseEntity{
     }
 
     attack(e:BaseEnemyEntity):void{
-        if(this.currentAttack > 0){
+        if(this.currentAttack >= this.manaCost[this.selectedAttack]){
             this.currentAttack -= this.attackCost[this.selectedAttack];
             e.takeDamage(1);
         }
     }
 
     castSpell():void{
-        if(this.currentMana > 0){
-            this.currentMana -= this.manaCost[this.selectedAttack];
+        if(this.currentMana >= this.manaCost[this.selectedMana]){
+            this.currentMana -= this.manaCost[this.selectedMana];
         }
+    }
+
+    move(direction:Phaser.Point):void{
+        let willCost:boolean = false;
+        let gameplayState:GameplayState = <GameplayState>this.game.state.getCurrentState();
+        for(let i:number=0; i<gameplayState.enemies.length; i++){
+            if(gameplayState.enemies[i].discovered){
+                willCost = true;
+                break;
+            }
+        }
+        if(willCost){
+            if(this.currentStamina >= this.staminaCost[this.selectedStamina]){
+                this.currentStamina -= this.staminaCost[this.selectedStamina];
+            }
+            else{
+                return;
+            }
+        }
+        this.x += direction.x * PhasePunk.TILE_SIZE;
+        this.y += direction.y * PhasePunk.TILE_SIZE;
     }
 
     takeDamage(damage:number):void{
@@ -101,7 +122,7 @@ class PlayerEntity extends BaseEntity{
         }
     }
 
-    move(direction:Phaser.Point):void{
+    updateStep(direction:Phaser.Point):void{
         let gameplayState:GameplayState = <GameplayState>this.game.state.getCurrentState();
         let playerTile:Phaser.Point = this.getTilePosition();
         for(let i:number=0; i<gameplayState.enemies.length; i++){
@@ -111,12 +132,15 @@ class PlayerEntity extends BaseEntity{
                 break;
             }
         }
-        if(!gameplayState.tileMap.getSolid(playerTile.x + direction.x, playerTile.y + direction.y)){
-            if(this.currentStamina > 0){
-                this.currentStamina -= this.staminaCost[this.selectedStamina];
-                this.x += direction.x * PhasePunk.TILE_SIZE;
-                this.y += direction.y * PhasePunk.TILE_SIZE;
+        for(let i:number=0; i<gameplayState.treasures.length; i++){
+            let p:Phaser.Point = gameplayState.treasures[i].getTilePosition();
+            if(p.equals(new Phaser.Point(playerTile.x + direction.x, playerTile.y + direction.y))){
+                //Unlock the treasure chest
+                break;
             }
+        }
+        if(!gameplayState.tileMap.getSolid(playerTile.x + direction.x, playerTile.y + direction.y)){
+            this.move(direction);
         }
         this.updateGraphics(direction);
         this.clearAround();

@@ -6,6 +6,7 @@ class GameplayState extends BaseState {
     fogOfWar: GameTilemap;
     dijkstraMap: number[][];
     enemies: BaseEnemyEntity[];
+    treasures:BaseTreasureEntity[];
 
     constructor() {
         super();
@@ -95,9 +96,9 @@ class GameplayState extends BaseState {
     create() {
         super.create();
         let data = {
-            "mapData": ["40x40", "solid:empty"],
-            "roomData": ["equal:4x4:16", "empty:1|solid:2"],
-            "names": ["empty:-1", "solid:-1", "player:1", "enemy:60"],
+            "mapData": ["25x25", "solid:empty"],
+            "roomData": ["equal:2x2:4", "empty:1|solid:2"],
+            "names": ["empty:-1", "solid:-1", "player:1", "enemy:60", "treasure:10"],
             "neighbourhoods": {
                 "plus": "010,101,010",
                 "all": "111,101,111"
@@ -116,12 +117,16 @@ class GameplayState extends BaseState {
                     "rules": ["solid,all,or,empty>3,empty:1"]
                 },
                 {
-                    "genData": ["4", "map:-1", "connect:plus:1"],
+                    "genData": ["4", "map:-1", "none:plus:1"],
                     "rules": ["empty,plus,or,solid<1,player:1|empty:100"]
                 },
                 {
-                    "genData": ["2", "map:-1", "connect:plus:0"],
-                    "rules": ["empty,plus,or,solid<3,enemy:1|empty:40"]
+                    "genData": ["2", "map:-1", "none:plus:0"],
+                    "rules": ["empty,plus,or,solid<3,enemy:1|empty:30"]
+                },
+                {
+                    "genData": ["1", "map:-1", "none:plus:0"],
+                    "rules": ["empty,plus,or,solid==3,treasure:1"]
                 }
             ]
         };
@@ -132,6 +137,7 @@ class GameplayState extends BaseState {
         this.fogOfWar = new GameTilemap(this.game, level.length, level[0].length, this.layers[Layer.UPPER_LAYER]);
         this.dijkstraMap = [];
         this.enemies = [];
+        this.treasures = [];
         for (let y: number = 0; y < this.tileMap.getHeight(); y++) {
             this.dijkstraMap.push([]);
             for (let x: number = 0; x < this.tileMap.getWidth(); x++) {
@@ -158,6 +164,10 @@ class GameplayState extends BaseState {
                     this.enemies.push(new BaseEnemyEntity(this.game, x, y, 1));
                     this.layers[Layer.OBJECT_LAYER].add(this.enemies[this.enemies.length - 1]);
                 }
+                if (level[y][x] == "treasure") {
+                    this.treasures.push(new BaseTreasureEntity(this.game, x, y));
+                    this.layers[Layer.OBJECT_LAYER].add(this.treasures[this.treasures.length - 1]);
+                }
             }
         }
 
@@ -171,8 +181,50 @@ class GameplayState extends BaseState {
         this.layers[Layer.HUD_LAYER].add(new HUDEntity(this.game, 0, 0));
     }
 
+    selectNearestPoint(p:Phaser.Point, ps:Phaser.Point[]):Phaser.Point{
+        let priority:number[] = [1/(Math.abs(ps[0].x - p.x) + Math.abs(ps[0].y - p.y))];
+        for(let i=1; i<ps.length; i++){
+            priority.push(1/(Math.abs(ps[0].x - p.x) + Math.abs(ps[0].y - p.y)) + priority[i-1]);
+        }
+        for(let i=0; i<ps.length; i++){
+            priority[i] /= priority[priority.length - 1];
+        }
+        let value:number = this.game.rnd.realInRange(0, 1);
+        for(let i=0; i<ps.length; i++){
+            if(value < priority[i]){
+                return ps[i];
+            }
+        }
+        return ps[ps.length - 1];
+    }
+
+    createNewEnemy(probability:number):void{
+        if(this.game.rnd.realInRange(0, 1)>probability){
+            return;
+        }
+
+        let ps:Phaser.Point[] = [];
+        for(let x:number=0; x<this.tileMap.getWidth(); x++){
+            for(let y:number=0; y<this.tileMap.getHeight(); y++){
+                if(!this.tileMap.getSolid(x, y) && !this.player.getTilePosition().equals(new Phaser.Point(x, y)) && 
+                    this.fogOfWar.getTile(x, y, this.fogOfWar.getLayerIndex("layer1")) == null){
+                    ps.push(new Phaser.Point(x, y));
+                }
+            }
+        }
+        if(ps.length > 0){
+            let selected:Phaser.Point = this.selectNearestPoint(this.player.getTilePosition(), ps);
+            this.enemies.push(new BaseEnemyEntity(this.game, selected.x, selected.y, 1));
+            this.layers[Layer.OBJECT_LAYER].add(this.enemies[this.enemies.length - 1]);
+        }
+    }
+
     update(): void {
         super.update();
+
+        if(this.player.currentHealth <= 0){
+            return;
+        }
 
         let direction: Phaser.Point = new Phaser.Point();
         let spacebar: boolean = false;
@@ -205,7 +257,7 @@ class GameplayState extends BaseState {
                 this.player.refresh();
             }
             else {
-                this.player.move(direction);
+                this.player.updateStep(direction);
             }
             let playerPos: Phaser.Point = this.player.getTilePosition();
             for (let i: number = 0; i < this.dijkstraMap.length; i++) {
@@ -219,6 +271,9 @@ class GameplayState extends BaseState {
                 if (this.enemies[i].health > 0) {
                     this.enemies[i].stepUpdate();
                 }
+            }
+            if(spacebar){
+                this.createNewEnemy(0.75);
             }
         }
         if (this.player.currentHealth <= 0) {
