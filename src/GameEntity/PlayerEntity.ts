@@ -75,15 +75,23 @@ class PlayerEntity extends BaseEntity {
         super.destroy();
     }
 
-    attack(e: BaseEnemyEntity): void {
+    attack(e: BaseEnemyEntity, firstTime:boolean = true): void {
+        let gameplay: GameplayState = <GameplayState>this.game.state.getCurrentState();
         if (this.currentAttack >= this.manaCost[this.selectedAttack]) {
             let particle: BaseParticle = new BaseParticle(this.game,
                 e.getTilePosition().x, e.getTilePosition().y, "weapon" + this.selectedAttack);
-            let gameplay: GameplayState = <GameplayState>this.game.state.getCurrentState();
             gameplay.layers[Layer.PARTICLE_LAYER].add(particle);
 
-            this.currentAttack -= this.attackCost[this.selectedAttack];
+            if(firstTime){
+                this.currentAttack -= this.attackCost[this.selectedAttack];
+            }
             e.takeDamage(1);
+        }
+        else{
+            this.refresh();
+            let particle:TextParticle = new TextParticle(this.game,
+                gameplay.player.getTilePosition().x, gameplay.player.getTilePosition().y, "no strength");
+            gameplay.layers[Layer.PARTICLE_LAYER].add(particle);
         }
     }
 
@@ -132,6 +140,12 @@ class PlayerEntity extends BaseEntity {
                 }
                 break;
             }
+        }
+        else{
+            this.refresh();
+            let particle:TextParticle = new TextParticle(this.game,
+                gameplayState.player.getTilePosition().x, gameplayState.player.getTilePosition().y, "no mana");
+            gameplayState.layers[Layer.PARTICLE_LAYER].add(particle);
         }
     }
 
@@ -193,37 +207,37 @@ class PlayerEntity extends BaseEntity {
                     break;
                 case 2:
                     if (p.equals(new Phaser.Point(playerTile.x + direction.x, playerTile.y + direction.y))) {
-                        this.attack(gameplayState.enemies[i]);
+                        this.attack(gameplayState.enemies[i], !happen);
                         happen = true;
                     }
                     if(p.equals(new Phaser.Point(playerTile.x + direction.x + direction.y, playerTile.y + direction.y + direction.x))){
-                        this.attack(gameplayState.enemies[i]);
+                        this.attack(gameplayState.enemies[i], !happen);
                         happen = true;
                     }
                     if(p.equals(new Phaser.Point(playerTile.x + direction.x - direction.y, playerTile.y + direction.y - direction.x))){
-                        this.attack(gameplayState.enemies[i]);
+                        this.attack(gameplayState.enemies[i], !happen);
                         happen = true;
                     }
 
                     if (p.equals(new Phaser.Point(playerTile.x - direction.x, playerTile.y - direction.y))) {
-                        this.attack(gameplayState.enemies[i]);
+                        this.attack(gameplayState.enemies[i], !happen);
                         happen = true;
                     }
                     if(p.equals(new Phaser.Point(playerTile.x - direction.x + direction.y, playerTile.y - direction.y + direction.x))){
-                        this.attack(gameplayState.enemies[i]);
+                        this.attack(gameplayState.enemies[i], !happen);
                         happen = true;
                     }
                     if(p.equals(new Phaser.Point(playerTile.x - direction.x - direction.y, playerTile.y - direction.y - direction.x))){
-                        this.attack(gameplayState.enemies[i]);
+                        this.attack(gameplayState.enemies[i], !happen);
                         happen = true;
                     }
 
                     if (p.equals(new Phaser.Point(playerTile.x + direction.y, playerTile.y + direction.x))) {
-                        this.attack(gameplayState.enemies[i]);
+                        this.attack(gameplayState.enemies[i], !happen);
                         happen = true;
                     }
                     if (p.equals(new Phaser.Point(playerTile.x - direction.y, playerTile.y - direction.x))) {
-                        this.attack(gameplayState.enemies[i]);
+                        this.attack(gameplayState.enemies[i], !happen);
                         happen = true;
                     }
                     break;
@@ -248,12 +262,17 @@ class PlayerEntity extends BaseEntity {
         for (let i: number = 0; i < gameplayState.treasures.length; i++) {
             let p: Phaser.Point = gameplayState.treasures[i].getTilePosition();
             if (p.equals(new Phaser.Point(playerTile.x + direction.x, playerTile.y + direction.y))) {
-                //Unlock the treasure chest
+                gameplayState.treasures[i].open();
                 break;
             }
         }
-        if (!gameplayState.tileMap.getSolid(playerTile.x + direction.x, playerTile.y + direction.y) && !happen) {
-            this.move(direction);
+        if (!happen) {
+            if(!gameplayState.tileMap.getSolid(playerTile.x + direction.x, playerTile.y + direction.y)){
+                this.move(direction);
+            }
+            else{
+                this.refresh();
+            }
         }
         this.updateGraphics(direction);
         this.clearAround();

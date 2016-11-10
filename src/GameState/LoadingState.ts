@@ -39,6 +39,6 @@ class LoadingState extends Phaser.State{
         PhasePunk.initialize(this.game);
         PhasePunk.loadGame();
         
-        this.game.state.start("Gameplay", true);
+        this.game.state.start("MainMenu", true);
     }
 }

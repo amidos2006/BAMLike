@@ -292,6 +292,7 @@ class GameplayState extends BaseState {
         }
         for (let i: number = 0; i < this.enemies.length; i++) {
             if (this.enemies[i].health <= 0) {
+                PhasePunk.score += 1;
                 this.enemies[i].destroy();
                 this.enemies.splice(i, 1);
                 i--;

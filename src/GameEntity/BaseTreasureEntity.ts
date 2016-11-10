@@ -18,6 +18,11 @@ class BaseTreasureEntity extends BaseEntity{
         this.chestState = 0;
     }
 
+    open():void{
+        this.chestState = 1;
+        PhasePunk.score += 10;
+    }
+
     update():void{
         super.update();
 
