@@ -20,8 +20,8 @@ class LoadingState extends Phaser.State{
         this.game.load.image("frozen", "assets/graphics/objects/rock01.png");
         
         this.game.load.image("weapon0", "assets/graphics/objects/weap00.png");
-        this.game.load.image("weapon1", "assets/graphics/objects/weap01.png");
-        this.game.load.image("weapon2", "assets/graphics/objects/weap02.png");
+        this.game.load.image("weapon1", "assets/graphics/objects/weap02.png");
+        this.game.load.image("weapon2", "assets/graphics/objects/weap01.png");
 
         this.game.load.image("stamina0", "assets/graphics/objects/weap00.png");
         this.game.load.image("stamina1", "assets/graphics/objects/weap01.png");

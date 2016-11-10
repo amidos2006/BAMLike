@@ -66,6 +66,15 @@ class PlayerEntity extends BaseEntity {
         this.manaCost = [1, 2, 4];
     }
 
+    destroy():void{
+        let tilePosition:Phaser.Point = this.getTilePosition();
+        let particle: BaseParticle = new BaseParticle(this.game,
+            tilePosition.x, tilePosition.y, "mana0", 2);
+        let gameplay: GameplayState = <GameplayState>this.game.state.getCurrentState();
+
+        super.destroy();
+    }
+
     attack(e: BaseEnemyEntity): void {
         if (this.currentAttack >= this.manaCost[this.selectedAttack]) {
             let particle: BaseParticle = new BaseParticle(this.game,
@@ -96,6 +105,12 @@ class PlayerEntity extends BaseEntity {
                 let randomIndex:number = this.game.rnd.integerInRange(0, p.length - 1);
                 this.x = (p[randomIndex].x + 0.5) * PhasePunk.TILE_SIZE;
                 this.y = (p[randomIndex].y + 0.5) * PhasePunk.TILE_SIZE;
+                let particle: BaseParticle = new BaseParticle(this.game,
+                    p[randomIndex].x, p[randomIndex].y, "mana" + this.selectedMana);
+                gameplayState.layers[Layer.PARTICLE_LAYER].add(particle);
+                particle = new BaseParticle(this.game,
+                    tilePosition.x, tilePosition.y, "mana" + this.selectedMana);
+                gameplayState.layers[Layer.PARTICLE_LAYER].add(particle);
                 this.clearAround();
                 break;
                 case 1:
@@ -108,7 +123,11 @@ class PlayerEntity extends BaseEntity {
                 case 2:
                 for (let i: number = 0; i < gameplayState.enemies.length; i++) {
                     if(gameplayState.enemies[i].discovered){
+                        let ep:Phaser.Point = gameplayState.enemies[i].getTilePosition();
                         gameplayState.enemies[i].takeDamage(1);
+                        let particle: BaseParticle = new BaseParticle(this.game,
+                            ep.x, ep.y, "mana" + this.selectedMana);
+                        gameplayState.layers[Layer.PARTICLE_LAYER].add(particle);
                     }
                 }
                 break;
@@ -172,7 +191,7 @@ class PlayerEntity extends BaseEntity {
                         happen = true;
                     }
                     break;
-                case 1:
+                case 2:
                     if (p.equals(new Phaser.Point(playerTile.x + direction.x, playerTile.y + direction.y))) {
                         this.attack(gameplayState.enemies[i]);
                         happen = true;
@@ -185,8 +204,30 @@ class PlayerEntity extends BaseEntity {
                         this.attack(gameplayState.enemies[i]);
                         happen = true;
                     }
+
+                    if (p.equals(new Phaser.Point(playerTile.x - direction.x, playerTile.y - direction.y))) {
+                        this.attack(gameplayState.enemies[i]);
+                        happen = true;
+                    }
+                    if(p.equals(new Phaser.Point(playerTile.x - direction.x + direction.y, playerTile.y - direction.y + direction.x))){
+                        this.attack(gameplayState.enemies[i]);
+                        happen = true;
+                    }
+                    if(p.equals(new Phaser.Point(playerTile.x - direction.x - direction.y, playerTile.y - direction.y - direction.x))){
+                        this.attack(gameplayState.enemies[i]);
+                        happen = true;
+                    }
+
+                    if (p.equals(new Phaser.Point(playerTile.x + direction.y, playerTile.y + direction.x))) {
+                        this.attack(gameplayState.enemies[i]);
+                        happen = true;
+                    }
+                    if (p.equals(new Phaser.Point(playerTile.x - direction.y, playerTile.y - direction.x))) {
+                        this.attack(gameplayState.enemies[i]);
+                        happen = true;
+                    }
                     break;
-                case 2:
+                case 1:
                     for(let j:number=0; j<Math.max(gameplayState.tileMap.getWidth(), gameplayState.tileMap.getHeight()); j++){
                         if(gameplayState.tileMap.getSolid(playerTile.x + direction.x, playerTile.y + direction.y, false)){
                             break;
@@ -200,7 +241,7 @@ class PlayerEntity extends BaseEntity {
                     }
                     break;
             }
-            if(happen){
+            if(happen && this.selectedAttack != 2){
                 break;
             }
         }
