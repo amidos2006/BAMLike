@@ -3,6 +3,8 @@
 class BaseEnemyEntity extends BaseEntity{
     health:number;
     discovered:boolean;
+    frozen:number;
+    private frozenImage:Phaser.Image;
 
     constructor(game:Phaser.Game, xTile:number, yTile:number, health:number){
         super(game);
@@ -15,6 +17,12 @@ class BaseEnemyEntity extends BaseEntity{
         image.anchor.set(0.5, 0.5);
         this.add(image);
         this.discovered = false;
+        this.frozen = 0;
+
+        this.frozenImage = new Phaser.Image(game, 0, 0, "frozen");
+        this.frozenImage.anchor.set(0.5, 0.5);
+        this.frozenImage.alpha = 0;
+        this.add(this.frozenImage);
     }
 
     move(direction:Phaser.Point):void{
@@ -47,6 +55,10 @@ class BaseEnemyEntity extends BaseEntity{
             }
             return;
         }
+        if(this.frozen > 0){
+            this.frozen -= 1;
+            return;
+        }
 
         let direction:Phaser.Point = new Phaser.Point();
         if(!gameplay.tileMap.getSolid(currentPos.x, currentPos.y-1) && 
@@ -71,5 +83,11 @@ class BaseEnemyEntity extends BaseEntity{
         else{
             this.move(direction);
         }
+    }
+
+    update():void{
+        super.update();
+
+        this.frozenImage.alpha = this.frozen / 4;
     }
 }

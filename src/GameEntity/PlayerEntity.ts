@@ -1,28 +1,28 @@
-class PlayerEntity extends BaseEntity{
-    private imageUp:Phaser.Image;
-    private imageDown:Phaser.Image;
-    private imageLeft:Phaser.Image;
-    private imageRight:Phaser.Image;
-    
-    private attackCost:number[];
-    private staminaCost:number[];
-    private manaCost:number[];
+class PlayerEntity extends BaseEntity {
+    private imageUp: Phaser.Image;
+    private imageDown: Phaser.Image;
+    private imageLeft: Phaser.Image;
+    private imageRight: Phaser.Image;
 
-    selectedAttack:number;
-    selectedStamina:number;
-    selectedMana:number;
+    private attackCost: number[];
+    private staminaCost: number[];
+    private manaCost: number[];
 
-    currentAttack:number;
-    currentStamina:number;
-    currentMana:number;
-    currentHealth:number;
+    selectedAttack: number;
+    selectedStamina: number;
+    selectedMana: number;
 
-    totalAttack:number;
-    totalStamina:number;
-    totalMana:number;
-    totalHealth:number;
+    currentAttack: number;
+    currentStamina: number;
+    currentMana: number;
+    currentHealth: number;
 
-    constructor(game:Phaser.Game, xTile:number, yTile:number){
+    totalAttack: number;
+    totalStamina: number;
+    totalMana: number;
+    totalHealth: number;
+
+    constructor(game: Phaser.Game, xTile: number, yTile: number) {
         super(game);
 
         this.x = (xTile + 0.5) * PhasePunk.TILE_SIZE;
@@ -66,100 +66,172 @@ class PlayerEntity extends BaseEntity{
         this.manaCost = [1, 2, 4];
     }
 
-    attack(e:BaseEnemyEntity):void{
-        if(this.currentAttack >= this.manaCost[this.selectedAttack]){
+    attack(e: BaseEnemyEntity): void {
+        if (this.currentAttack >= this.manaCost[this.selectedAttack]) {
+            let particle: BaseParticle = new BaseParticle(this.game,
+                e.getTilePosition().x, e.getTilePosition().y, "weapon" + this.selectedAttack);
+            let gameplay: GameplayState = <GameplayState>this.game.state.getCurrentState();
+            gameplay.layers[Layer.PARTICLE_LAYER].add(particle);
+
             this.currentAttack -= this.attackCost[this.selectedAttack];
             e.takeDamage(1);
         }
     }
 
-    castSpell():void{
-        if(this.currentMana >= this.manaCost[this.selectedMana]){
+    castSpell(): void {
+        let gameplayState: GameplayState = <GameplayState>this.game.state.getCurrentState();
+        let tilePosition:Phaser.Point = this.getTilePosition();
+        if (this.currentMana >= this.manaCost[this.selectedMana]) {
             this.currentMana -= this.manaCost[this.selectedMana];
+            switch(this.selectedMana){
+                case 0:
+                let p:Phaser.Point[] = [];
+                for(let x:number=0; x<gameplayState.tileMap.getWidth(); x++){
+                    for(let y:number=0; y<gameplayState.tileMap.getHeight(); y++){
+                        if(!gameplayState.tileMap.getSolid(x, y) && !tilePosition.equals(new Phaser.Point(x, y))){
+                            p.push(new Phaser.Point(x, y));
+                        }
+                    }
+                }
+                let randomIndex:number = this.game.rnd.integerInRange(0, p.length - 1);
+                this.x = (p[randomIndex].x + 0.5) * PhasePunk.TILE_SIZE;
+                this.y = (p[randomIndex].y + 0.5) * PhasePunk.TILE_SIZE;
+                this.clearAround();
+                break;
+                case 1:
+                for (let i: number = 0; i < gameplayState.enemies.length; i++) {
+                    if(gameplayState.enemies[i].discovered){
+                        gameplayState.enemies[i].frozen = 4;
+                    }
+                }
+                break;
+                case 2:
+                for (let i: number = 0; i < gameplayState.enemies.length; i++) {
+                    if(gameplayState.enemies[i].discovered){
+                        gameplayState.enemies[i].takeDamage(1);
+                    }
+                }
+                break;
+            }
         }
     }
 
-    move(direction:Phaser.Point):void{
-        let willCost:boolean = false;
-        let gameplayState:GameplayState = <GameplayState>this.game.state.getCurrentState();
-        for(let i:number=0; i<gameplayState.enemies.length; i++){
-            if(gameplayState.enemies[i].discovered){
+    move(direction: Phaser.Point): void {
+        let willCost: boolean = false;
+        let gameplayState: GameplayState = <GameplayState>this.game.state.getCurrentState();
+        for (let i: number = 0; i < gameplayState.enemies.length; i++) {
+            if (gameplayState.enemies[i].discovered) {
                 willCost = true;
                 break;
             }
         }
-        if(willCost){
-            if(this.currentStamina >= this.staminaCost[this.selectedStamina]){
-                this.currentStamina -= this.staminaCost[this.selectedStamina];
-            }
-            else{
-                return;
-            }
-        }
+        // if(willCost){
+        //     if(this.currentStamina >= this.staminaCost[this.selectedStamina]){
+        //         this.currentStamina -= this.staminaCost[this.selectedStamina];
+        //     }
+        //     else{
+        //         return;
+        //     }
+        // }
         this.x += direction.x * PhasePunk.TILE_SIZE;
         this.y += direction.y * PhasePunk.TILE_SIZE;
     }
 
-    takeDamage(damage:number):void{
+    takeDamage(damage: number): void {
         this.currentHealth -= damage;
-        if(this.currentHealth <= 0){
+        if (this.currentHealth <= 0) {
             this.currentHealth = 0;
         }
     }
 
-    refresh():void{
+    refresh(): void {
         this.currentAttack += 1;
         this.currentStamina += 1;
         this.currentMana += 1;
-        if(this.currentAttack > this.totalAttack){
+        if (this.currentAttack > this.totalAttack) {
             this.currentAttack = this.totalAttack;
         }
-        if(this.currentStamina > this.totalStamina){
+        if (this.currentStamina > this.totalStamina) {
             this.currentStamina = this.totalStamina;
         }
-        if(this.currentMana > this.totalMana){
+        if (this.currentMana > this.totalMana) {
             this.currentMana = this.totalMana;
         }
     }
 
-    updateStep(direction:Phaser.Point):void{
-        let gameplayState:GameplayState = <GameplayState>this.game.state.getCurrentState();
-        let playerTile:Phaser.Point = this.getTilePosition();
-        for(let i:number=0; i<gameplayState.enemies.length; i++){
-            let p:Phaser.Point = gameplayState.enemies[i].getTilePosition();
-            if(p.equals(new Phaser.Point(playerTile.x + direction.x, playerTile.y + direction.y))){
-                this.attack(gameplayState.enemies[i]);
+    updateStep(direction: Phaser.Point): void {
+        let gameplayState: GameplayState = <GameplayState>this.game.state.getCurrentState();
+        let playerTile: Phaser.Point = this.getTilePosition();
+        let happen:boolean = false;
+        for (let i: number = 0; i < gameplayState.enemies.length; i++) {
+            let p: Phaser.Point = gameplayState.enemies[i].getTilePosition();
+            switch (this.selectedAttack) {
+                case 0:
+                    if (p.equals(new Phaser.Point(playerTile.x + direction.x, playerTile.y + direction.y))) {
+                        this.attack(gameplayState.enemies[i]);
+                        happen = true;
+                    }
+                    break;
+                case 1:
+                    if (p.equals(new Phaser.Point(playerTile.x + direction.x, playerTile.y + direction.y))) {
+                        this.attack(gameplayState.enemies[i]);
+                        happen = true;
+                    }
+                    if(p.equals(new Phaser.Point(playerTile.x + direction.x + direction.y, playerTile.y + direction.y + direction.x))){
+                        this.attack(gameplayState.enemies[i]);
+                        happen = true;
+                    }
+                    if(p.equals(new Phaser.Point(playerTile.x + direction.x - direction.y, playerTile.y + direction.y - direction.x))){
+                        this.attack(gameplayState.enemies[i]);
+                        happen = true;
+                    }
+                    break;
+                case 2:
+                    for(let j:number=0; j<Math.max(gameplayState.tileMap.getWidth(), gameplayState.tileMap.getHeight()); j++){
+                        if(gameplayState.tileMap.getSolid(playerTile.x + direction.x, playerTile.y + direction.y, false)){
+                            break;
+                        }
+                        if(p.equals(new Phaser.Point(playerTile.x + direction.x * j, playerTile.y + direction.y * j)) &&
+                            gameplayState.enemies[i].discovered){
+                            this.attack(gameplayState.enemies[i]);
+                            happen = true;
+                            break;
+                        }
+                    }
+                    break;
+            }
+            if(happen){
                 break;
             }
         }
-        for(let i:number=0; i<gameplayState.treasures.length; i++){
-            let p:Phaser.Point = gameplayState.treasures[i].getTilePosition();
-            if(p.equals(new Phaser.Point(playerTile.x + direction.x, playerTile.y + direction.y))){
+        for (let i: number = 0; i < gameplayState.treasures.length; i++) {
+            let p: Phaser.Point = gameplayState.treasures[i].getTilePosition();
+            if (p.equals(new Phaser.Point(playerTile.x + direction.x, playerTile.y + direction.y))) {
                 //Unlock the treasure chest
                 break;
             }
         }
-        if(!gameplayState.tileMap.getSolid(playerTile.x + direction.x, playerTile.y + direction.y)){
+        if (!gameplayState.tileMap.getSolid(playerTile.x + direction.x, playerTile.y + direction.y) && !happen) {
             this.move(direction);
         }
         this.updateGraphics(direction);
         this.clearAround();
     }
 
-    clearAround():void{
-        let gameplayState:GameplayState = <GameplayState>this.game.state.getCurrentState();
-        let playerTile:Phaser.Point = this.getTilePosition();
-        for(let x:number=-4; x<=4; x++){
-            for(let y:number=-4; y<=4; y++){
-                if(Math.abs(x) + Math.abs(y) < 4){
+    clearAround(): void {
+        let gameplayState: GameplayState = <GameplayState>this.game.state.getCurrentState();
+        let playerTile: Phaser.Point = this.getTilePosition();
+        for (let x: number = -4; x <= 4; x++) {
+            for (let y: number = -4; y <= 4; y++) {
+                if (Math.abs(x) + Math.abs(y) < 4) {
                     gameplayState.fogOfWar.clearTile(1, playerTile.x + x, playerTile.y + y);
                 }
             }
         }
     }
 
-    updateGraphics(direction:Phaser.Point):void{
-        if(direction.x < 0){
+    updateGraphics(direction: Phaser.Point): void {
+        if (direction.x < 0) {
             this.imageDown.alpha = 0;
             this.imageUp.alpha = 0;
             this.imageLeft.alpha = 0;
@@ -167,33 +239,33 @@ class PlayerEntity extends BaseEntity{
 
             this.imageLeft.alpha = 1;
         }
-        if(direction.x > 0){
+        if (direction.x > 0) {
             this.imageDown.alpha = 0;
             this.imageUp.alpha = 0;
             this.imageLeft.alpha = 0;
             this.imageRight.alpha = 0;
-            
+
             this.imageRight.alpha = 1;
         }
-        if(direction.y < 0){
+        if (direction.y < 0) {
             this.imageDown.alpha = 0;
             this.imageUp.alpha = 0;
             this.imageLeft.alpha = 0;
             this.imageRight.alpha = 0;
-            
+
             this.imageUp.alpha = 1;
         }
-        if(direction.y > 0){
+        if (direction.y > 0) {
             this.imageDown.alpha = 0;
             this.imageUp.alpha = 0;
             this.imageLeft.alpha = 0;
             this.imageRight.alpha = 0;
-            
+
             this.imageDown.alpha = 1;
         }
     }
 
-    update():void{
+    update(): void {
         super.update();
 
         if (this.game.input.keyboard.isDown(Phaser.Keyboard.ONE)) {

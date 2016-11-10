@@ -25,7 +25,7 @@ class HUDEntity extends BaseEntity{
 
         let style = { font: "8px pixelFont", fill: "rgb(192,235,211)", align: "center" };
 
-        let image:Phaser.Image = new Phaser.Image(game, this.game.width/2, 12, "hud");
+        let image:Phaser.Image = new Phaser.Image(game, this.game.width/2, this.game.height - 12, "hud");
         image.anchor.set(0.5, 0.5);
         this.add(image);
         this.chealthText = new Phaser.Text(game, image.x - 13, image.y + 2, "", style);
@@ -54,21 +54,21 @@ class HUDEntity extends BaseEntity{
             this.add(this.weaponImage[i]);
         }
 
-        image = new Phaser.Image(game, this.game.width/2, this.game.height - 12, "hud");
-        image.anchor.set(0.5, 0.5);
-        this.add(image);
-        this.cstaminaText = new Phaser.Text(game, image.x - 13, image.y + 2, "", style);
-        this.cstaminaText.anchor.set(0.5, 0.5);
-        this.add(this.cstaminaText);
-        this.tstaminaText = new Phaser.Text(game, image.x + 13, image.y + 2, "", style);
-        this.tstaminaText.anchor.set(0.5, 0.5);
-        this.add(this.tstaminaText);
-        for(let i:number=0; i<3; i++){
-            this.staminaImage.push(new Phaser.Image(game, image.x, image.y, "stamina" + i));
-            this.staminaImage[i].anchor.set(0.5, 0.5);
-            this.staminaImage[i].alpha = 0;
-            this.add(this.staminaImage[i]);
-        }
+        // image = new Phaser.Image(game, this.game.width/2, this.game.height - 12, "hud");
+        // image.anchor.set(0.5, 0.5);
+        // this.add(image);
+        // this.cstaminaText = new Phaser.Text(game, image.x - 13, image.y + 2, "", style);
+        // this.cstaminaText.anchor.set(0.5, 0.5);
+        // this.add(this.cstaminaText);
+        // this.tstaminaText = new Phaser.Text(game, image.x + 13, image.y + 2, "", style);
+        // this.tstaminaText.anchor.set(0.5, 0.5);
+        // this.add(this.tstaminaText);
+        // for(let i:number=0; i<3; i++){
+        //     this.staminaImage.push(new Phaser.Image(game, image.x, image.y, "stamina" + i));
+        //     this.staminaImage[i].anchor.set(0.5, 0.5);
+        //     this.staminaImage[i].alpha = 0;
+        //     this.add(this.staminaImage[i]);
+        // }
 
         image = new Phaser.Image(game, this.game.width/2 + 80, this.game.height - 12, "hud");
         image.anchor.set(0.5, 0.5);
@@ -93,9 +93,9 @@ class HUDEntity extends BaseEntity{
         for(let i:number=0; i<this.weaponImage.length; i++){
             this.weaponImage[i].alpha = 0;
         }
-        for(let i:number=0; i<this.staminaImage.length; i++){
-            this.staminaImage[i].alpha = 0;
-        }
+        // for(let i:number=0; i<this.staminaImage.length; i++){
+        //     this.staminaImage[i].alpha = 0;
+        // }
         for(let i:number=0; i<this.manaImage.length; i++){
             this.manaImage[i].alpha = 0;
         }
@@ -104,16 +104,16 @@ class HUDEntity extends BaseEntity{
 
         this.chealthText.text = "" + gameplayState.player.currentHealth;
         this.cattackText.text = "" + gameplayState.player.currentAttack;
-        this.cstaminaText.text = "" + gameplayState.player.currentStamina;
+        // this.cstaminaText.text = "" + gameplayState.player.currentStamina;
         this.cmanaText.text = "" + gameplayState.player.currentMana;
 
         this.thealthText.text = "" + gameplayState.player.totalHealth;
         this.tattackText.text = "" + gameplayState.player.totalAttack;
-        this.tstaminaText.text = "" + gameplayState.player.totalStamina;
+        // this.tstaminaText.text = "" + gameplayState.player.totalStamina;
         this.tmanaText.text = "" + gameplayState.player.totalMana;
 
         this.weaponImage[gameplayState.player.selectedAttack].alpha = 1;
-        this.staminaImage[gameplayState.player.selectedStamina].alpha = 1;
+        // this.staminaImage[gameplayState.player.selectedStamina].alpha = 1;
         this.manaImage[gameplayState.player.selectedMana].alpha = 1;
     }
 }

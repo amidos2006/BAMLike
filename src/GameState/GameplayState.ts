@@ -228,6 +228,7 @@ class GameplayState extends BaseState {
 
         let direction: Phaser.Point = new Phaser.Point();
         let spacebar: boolean = false;
+        let spell:boolean = false;
         if (this.game.input.keyboard.isDown(Phaser.Keyboard.UP)) {
             direction.y -= 1;
             this.game.input.reset();
@@ -248,13 +249,20 @@ class GameplayState extends BaseState {
             spacebar = true;
             this.game.input.reset();
         }
+        if (this.game.input.keyboard.isDown(Phaser.Keyboard.S)) {
+            spell = true;
+            this.game.input.reset();
+        }
         if (direction.x != 0 && direction.y != 0) {
             direction.x = 0;
         }
 
-        if (direction.x != 0 || direction.y != 0 || spacebar) {
+        if (direction.x != 0 || direction.y != 0 || spacebar || spell) {
             if (spacebar) {
                 this.player.refresh();
+            }
+            else if(spell){
+                this.player.castSpell();
             }
             else {
                 this.player.updateStep(direction);
@@ -274,6 +282,9 @@ class GameplayState extends BaseState {
             }
             if(spacebar){
                 this.createNewEnemy(0.75);
+            }
+            else{
+                this.createNewEnemy(0.1);
             }
         }
         if (this.player.currentHealth <= 0) {
