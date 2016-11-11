@@ -7,6 +7,7 @@ class HUDEntity extends BaseEntity{
     private tattackText:Phaser.Text;
     private tstaminaText:Phaser.Text;
     private tmanaText:Phaser.Text;
+    private scoreText:Phaser.Text;
 
     private healthImage:Phaser.Image;
     private weaponImage:Phaser.Image[];
@@ -70,6 +71,13 @@ class HUDEntity extends BaseEntity{
         //     this.add(this.staminaImage[i]);
         // }
 
+        image = new Phaser.Image(game, this.game.width/2, 12, "hud");
+        image.anchor.set(0.5, 0.5);
+        this.add(image);
+        this.scoreText = new Phaser.Text(game, image.x, image.y + 2, "", style);
+        this.scoreText.anchor.set(0.5, 0.5);
+        this.add(this.scoreText);
+
         image = new Phaser.Image(game, this.game.width/2 + 80, this.game.height - 12, "hud");
         image.anchor.set(0.5, 0.5);
         this.add(image);
@@ -111,6 +119,7 @@ class HUDEntity extends BaseEntity{
         this.tattackText.text = "" + gameplayState.player.totalAttack;
         // this.tstaminaText.text = "" + gameplayState.player.totalStamina;
         this.tmanaText.text = "" + gameplayState.player.totalMana;
+        this.scoreText.text = "" + PhasePunk.score;
 
         this.weaponImage[gameplayState.player.selectedAttack].alpha = 1;
         // this.staminaImage[gameplayState.player.selectedStamina].alpha = 1;

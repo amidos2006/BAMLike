@@ -13,7 +13,7 @@ class BaseEnemyEntity extends BaseEntity{
         this.y = (yTile + 0.5) * PhasePunk.TILE_SIZE;
         this.health = health;
 
-        let image:Phaser.Image = new Phaser.Image(game, 0, 0, "enemy_0");
+        let image:Phaser.Image = new Phaser.Image(game, 0, 0, "enemy_" + this.health);
         image.anchor.set(0.5, 0.5);
         this.add(image);
         this.discovered = false;

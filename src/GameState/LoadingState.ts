@@ -11,9 +11,10 @@ class LoadingState extends Phaser.State{
         for(let i:number=1; i<10; i++){
             this.game.load.image("hero_" + (i-1), "assets/graphics/people/npc01_" + i + ".png");
         }
-        for(let i:number=0; i<10; i++){
-            this.game.load.image("enemy_" + (i), "assets/graphics/objects/villain0" + i + ".png");
-        }
+        this.game.load.image("enemy_1", "assets/graphics/objects/villain0" + 0 + ".png");
+        this.game.load.image("enemy_2", "assets/graphics/objects/villain0" + 4 + ".png");
+        this.game.load.image("enemy_3", "assets/graphics/objects/villain0" + 1 + ".png");
+
         this.game.load.image("tiles", "assets/graphics/tiles.png");
         this.game.load.image("hud", "assets/graphics/hud.png");
         this.game.load.image("heart", "assets/graphics/objects/treasure00.png");

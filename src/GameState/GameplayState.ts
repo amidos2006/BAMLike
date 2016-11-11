@@ -161,7 +161,14 @@ class GameplayState extends BaseState {
                     playerPos.y = y;
                 }
                 if (level[y][x] == "enemy") {
-                    this.enemies.push(new BaseEnemyEntity(this.game, x, y, 1));
+                    let health:number = 1;
+                    if(this.game.rnd.realInRange(0, 1) < 0.25){
+                        health = 2;
+                        if(this.game.rnd.realInRange(0, 1) < 0.25){
+                            health = 3;
+                        }
+                    }
+                    this.enemies.push(new BaseEnemyEntity(this.game, x, y, health));
                     this.layers[Layer.OBJECT_LAYER].add(this.enemies[this.enemies.length - 1]);
                 }
                 if (level[y][x] == "treasure") {
@@ -213,8 +220,15 @@ class GameplayState extends BaseState {
             }
         }
         if(ps.length > 0){
+            let health:number = 1;
+            if(this.game.rnd.realInRange(0, 1) < 0.25){
+                health = 2;
+                if(this.game.rnd.realInRange(0, 1) < 0.25){
+                    health = 3;
+                }
+            }
             let selected:Phaser.Point = this.selectNearestPoint(this.player.getTilePosition(), ps);
-            this.enemies.push(new BaseEnemyEntity(this.game, selected.x, selected.y, 1));
+            this.enemies.push(new BaseEnemyEntity(this.game, selected.x, selected.y, health));
             this.layers[Layer.OBJECT_LAYER].add(this.enemies[this.enemies.length - 1]);
         }
     }
@@ -223,6 +237,10 @@ class GameplayState extends BaseState {
         super.update();
 
         if(this.player.currentHealth <= 0){
+            if(this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){
+                this.game.state.start("MainMenu");
+                this.game.input.reset();
+            }
             return;
         }
 
