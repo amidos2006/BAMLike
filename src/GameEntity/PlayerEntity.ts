@@ -81,7 +81,7 @@ class PlayerEntity extends BaseEntity {
 
     attack(e: BaseEnemyEntity, firstTime:boolean = true): void {
         let gameplay: GameplayState = <GameplayState>this.game.state.getCurrentState();
-        if (this.currentAttack >= this.attackCost[this.selectedAttack]) {
+        if (this.currentAttack >= this.attackCost[this.selectedAttack] || !firstTime) {
             let particle: BaseParticle = new BaseParticle(this.game,
                 e.getTilePosition().x, e.getTilePosition().y, "weapon" + this.selectedAttack);
             gameplay.layers[Layer.PARTICLE_LAYER].add(particle);
