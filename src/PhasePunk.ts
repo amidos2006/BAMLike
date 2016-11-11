@@ -4,6 +4,8 @@ class PhasePunk{
     static soundManager:SoundManager;
     static game:Phaser.Game;
     static score:number;
+    static levelScore:number;
+    static level:number;
     
     static initialize(game:Phaser.Game):void{
         PhasePunk.soundManager = new SoundManager(game);
@@ -12,6 +14,8 @@ class PhasePunk{
 
     static newGame():void{
         PhasePunk.score = 0;
+        PhasePunk.levelScore = 0;
+        PhasePunk.level = 0;
     }
 
     static getBaseState():BaseState{

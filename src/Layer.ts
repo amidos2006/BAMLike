@@ -1,11 +1,12 @@
 class Layer extends Phaser.Group{
     static BACKGROUND_LAYER:number = 0;
     static TILE_LAYER:number = 1;
-    static OBJECT_LAYER:number = 2;
-    static PARTICLE_LAYER:number = 3;
-    static UPPER_LAYER:number = 4;
-    static HUD_LAYER:number = 5;
-    static TRANSITION_LAYER:number = 6;
+    static UNDER_LAYER:number = 2;
+    static OBJECT_LAYER:number = 3;
+    static PARTICLE_LAYER:number = 4;
+    static UPPER_LAYER:number = 5;
+    static HUD_LAYER:number = 6;
+    static TRANSITION_LAYER:number = 7;
 
     constructor(game:Phaser.Game){
         super(game);

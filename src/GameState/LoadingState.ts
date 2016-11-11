@@ -34,6 +34,8 @@ class LoadingState extends Phaser.State{
 
         this.game.load.image("chest0", "assets/graphics/objects/chest00.png");
         this.game.load.image("chest1", "assets/graphics/objects/chest01.png");
+
+        this.game.load.image("exit", "assets/graphics/objects/step00.png");
     }
 
     update(){

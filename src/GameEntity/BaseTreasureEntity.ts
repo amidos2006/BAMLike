@@ -20,7 +20,12 @@ class BaseTreasureEntity extends BaseEntity{
 
     open():void{
         this.chestState = 1;
-        PhasePunk.score += 10;
+        let randomValue:number = this.game.rnd.integerInRange(2, 4);
+        for(let i:number=0; i<randomValue; i++){
+            let gameplay:GameplayState = <GameplayState> this.game.state.getCurrentState();
+            gameplay.player.refresh();
+            gameplay.player.healthRefresh();
+        }
     }
 
     update():void{

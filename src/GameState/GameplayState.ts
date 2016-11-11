@@ -7,6 +7,7 @@ class GameplayState extends BaseState {
     dijkstraMap: number[][];
     enemies: BaseEnemyEntity[];
     treasures:BaseTreasureEntity[];
+    exit:ExitEntity;
 
     constructor() {
         super();
@@ -95,6 +96,9 @@ class GameplayState extends BaseState {
 
     create() {
         super.create();
+        PhasePunk.levelScore = 0;
+        PhasePunk.level += 1;
+
         let data = {
             "mapData": ["25x25", "solid:empty"],
             "roomData": ["equal:2x2:4", "empty:1|solid:2"],
@@ -138,6 +142,7 @@ class GameplayState extends BaseState {
         this.dijkstraMap = [];
         this.enemies = [];
         this.treasures = [];
+        this.exit = null;
         for (let y: number = 0; y < this.tileMap.getHeight(); y++) {
             this.dijkstraMap.push([]);
             for (let x: number = 0; x < this.tileMap.getWidth(); x++) {
@@ -162,9 +167,9 @@ class GameplayState extends BaseState {
                 }
                 if (level[y][x] == "enemy") {
                     let health:number = 1;
-                    if(this.game.rnd.realInRange(0, 1) < 0.25){
+                    if(this.game.rnd.realInRange(0, 1) < 0.2){
                         health = 2;
-                        if(this.game.rnd.realInRange(0, 1) < 0.25){
+                        if(this.game.rnd.realInRange(0, 1) < 0.2){
                             health = 3;
                         }
                     }
@@ -179,6 +184,11 @@ class GameplayState extends BaseState {
         }
 
         this.player = new PlayerEntity(this.game, playerPos.x, playerPos.y);
+        if(PhasePunk.level > 1){
+            this.player.currentAttack = PlayerEntity.healthValue;
+            this.player.currentAttack = PlayerEntity.attackValue;
+            this.player.currentMana = PlayerEntity.manaValue;
+        }
         this.player.clearAround();
 
         this.dijkstraMap[playerPos.y][playerPos.x] = 0;
@@ -205,11 +215,7 @@ class GameplayState extends BaseState {
         return ps[ps.length - 1];
     }
 
-    createNewEnemy(probability:number):void{
-        if(this.game.rnd.realInRange(0, 1)>probability){
-            return;
-        }
-
+    getListOfEmptySpots():Phaser.Point[]{
         let ps:Phaser.Point[] = [];
         for(let x:number=0; x<this.tileMap.getWidth(); x++){
             for(let y:number=0; y<this.tileMap.getHeight(); y++){
@@ -219,11 +225,20 @@ class GameplayState extends BaseState {
                 }
             }
         }
+        return ps;
+    }
+
+    createNewEnemy(probability:number):void{
+        if(this.game.rnd.realInRange(0, 1)>probability){
+            return;
+        }
+
+        let ps:Phaser.Point[] = this.getListOfEmptySpots();
         if(ps.length > 0){
             let health:number = 1;
-            if(this.game.rnd.realInRange(0, 1) < 0.25){
+            if(this.game.rnd.realInRange(0, 1) < 0.2){
                 health = 2;
-                if(this.game.rnd.realInRange(0, 1) < 0.25){
+                if(this.game.rnd.realInRange(0, 1) < 0.5){
                     health = 3;
                 }
             }
@@ -233,14 +248,22 @@ class GameplayState extends BaseState {
         }
     }
 
+    createExit(scoreThreshold:number):void{
+        if(PhasePunk.levelScore < scoreThreshold || this.exit != null){
+            return;
+        }
+        let ps:Phaser.Point[] = this.getListOfEmptySpots();
+        if(ps.length > 0){
+            let selected:Phaser.Point = this.selectNearestPoint(this.player.getTilePosition(), ps);
+            this.exit = new ExitEntity(this.game, selected.x, selected.y)
+            this.layers[Layer.UNDER_LAYER].add(this.exit);
+        }
+    }
+
     update(): void {
         super.update();
 
         if(this.player.currentHealth <= 0){
-            if(this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){
-                this.game.state.start("MainMenu");
-                this.game.input.reset();
-            }
             return;
         }
 
@@ -307,15 +330,21 @@ class GameplayState extends BaseState {
         }
         if (this.player.currentHealth <= 0) {
             this.player.destroy();
+            let timer:Phaser.Timer = new Phaser.Timer(this.game);
+            timer.repeat(1200, 1, ()=>{this.game.state.start("Gameover");}, this);
+            this.game.time.add(timer);
+            timer.start();
         }
         for (let i: number = 0; i < this.enemies.length; i++) {
             if (this.enemies[i].health <= 0) {
                 PhasePunk.score += 1;
+                PhasePunk.levelScore += 1;
                 this.enemies[i].destroy();
                 this.enemies.splice(i, 1);
                 i--;
             }
         }
+        this.createExit(20 + Math.log(PhasePunk.level) * 20);
     }
 
     render(): void {

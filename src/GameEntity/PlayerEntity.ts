@@ -1,4 +1,8 @@
 class PlayerEntity extends BaseEntity {
+    static healthValue:number;
+    static attackValue:number;
+    static manaValue:number;
+
     private imageUp: Phaser.Image;
     private imageDown: Phaser.Image;
     private imageLeft: Phaser.Image;
@@ -63,7 +67,7 @@ class PlayerEntity extends BaseEntity {
 
         this.attackCost = [1, 2, 4];
         this.staminaCost = [1, 2, 4];
-        this.manaCost = [1, 2, 4];
+        this.manaCost = [2, 4, 8];
     }
 
     destroy():void{
@@ -77,7 +81,7 @@ class PlayerEntity extends BaseEntity {
 
     attack(e: BaseEnemyEntity, firstTime:boolean = true): void {
         let gameplay: GameplayState = <GameplayState>this.game.state.getCurrentState();
-        if (this.currentAttack >= this.manaCost[this.selectedAttack]) {
+        if (this.currentAttack >= this.attackCost[this.selectedAttack]) {
             let particle: BaseParticle = new BaseParticle(this.game,
                 e.getTilePosition().x, e.getTilePosition().y, "weapon" + this.selectedAttack);
             gameplay.layers[Layer.PARTICLE_LAYER].add(particle);
@@ -123,15 +127,16 @@ class PlayerEntity extends BaseEntity {
                 break;
                 case 1:
                 for (let i: number = 0; i < gameplayState.enemies.length; i++) {
-                    if(gameplayState.enemies[i].discovered){
+                    let ep:Phaser.Point = gameplayState.enemies[i].getTilePosition();
+                    if(gameplayState.fogOfWar.getTile(ep.x, ep.y, gameplayState.fogOfWar.getLayerIndex("layer1")) == null){
                         gameplayState.enemies[i].frozen = 4;
                     }
                 }
                 break;
                 case 2:
                 for (let i: number = 0; i < gameplayState.enemies.length; i++) {
-                    if(gameplayState.enemies[i].discovered){
-                        let ep:Phaser.Point = gameplayState.enemies[i].getTilePosition();
+                    let ep:Phaser.Point = gameplayState.enemies[i].getTilePosition();
+                    if(gameplayState.fogOfWar.getTile(ep.x, ep.y, gameplayState.fogOfWar.getLayerIndex("layer1")) == null){
                         gameplayState.enemies[i].takeDamage(1);
                         let particle: BaseParticle = new BaseParticle(this.game,
                             ep.x, ep.y, "mana" + this.selectedMana);
@@ -175,6 +180,8 @@ class PlayerEntity extends BaseEntity {
         if (this.currentHealth <= 0) {
             this.currentHealth = 0;
         }
+        let gameplay:GameplayState = <GameplayState> this.game.state.getCurrentState();
+        gameplay.startVibrating();
     }
 
     refresh(): void {
@@ -189,6 +196,13 @@ class PlayerEntity extends BaseEntity {
         }
         if (this.currentMana > this.totalMana) {
             this.currentMana = this.totalMana;
+        }
+    }
+
+    healthRefresh():void{
+        this.currentHealth += 1;
+        if(this.currentHealth > this.totalHealth){
+            this.currentHealth = this.totalHealth;
         }
     }
 
@@ -266,6 +280,17 @@ class PlayerEntity extends BaseEntity {
                 break;
             }
         }
+        if (gameplayState.exit != null) {
+            let p: Phaser.Point = gameplayState.exit.getTilePosition();
+            if (p.equals(new Phaser.Point(playerTile.x + direction.x, playerTile.y + direction.y))) {
+                PhasePunk.level += 1;
+                PlayerEntity.healthValue = this.currentHealth;
+                PlayerEntity.attackValue = this.currentAttack;
+                PlayerEntity.manaValue = this.currentMana;
+
+                this.game.state.start("Gameplay");
+            }
+        }
         if (!happen) {
             if(!gameplayState.tileMap.getSolid(playerTile.x + direction.x, playerTile.y + direction.y)){
                 this.move(direction);
@@ -328,7 +353,7 @@ class PlayerEntity extends BaseEntity {
     update(): void {
         super.update();
 
-        if (this.game.input.keyboard.isDown(Phaser.Keyboard.ONE)) {
+        if (this.game.input.keyboard.isDown(Phaser.Keyboard.A)) {
             this.selectedAttack += 1;
             this.selectedAttack %= 3;
             this.game.input.reset();
@@ -338,7 +363,7 @@ class PlayerEntity extends BaseEntity {
             this.selectedStamina %= 3;
             this.game.input.reset();
         }
-        if (this.game.input.keyboard.isDown(Phaser.Keyboard.THREE)) {
+        if (this.game.input.keyboard.isDown(Phaser.Keyboard.D)) {
             this.selectedMana += 1;
             this.selectedMana %= 3;
             this.game.input.reset();
