@@ -186,11 +186,11 @@ class GameplayState extends BaseState {
         }
 
         this.player = new PlayerEntity(this.game, playerPos.x, playerPos.y);
-        if(PhasePunk.level > 1){
-            this.player.currentAttack = PlayerEntity.healthValue;
-            this.player.currentAttack = PlayerEntity.attackValue;
-            this.player.currentMana = PlayerEntity.manaValue;
-        }
+        // if(PhasePunk.level > 1){
+        //     this.player.currentAttack = PlayerEntity.healthValue;
+        //     this.player.currentAttack = PlayerEntity.attackValue;
+        //     this.player.currentMana = PlayerEntity.manaValue;
+        // }
         this.player.clearAround();
 
         this.dijkstraMap[playerPos.y][playerPos.x] = 0;
