@@ -65,7 +65,7 @@ class PlayerEntity extends BaseEntity {
         this.currentStamina = this.totalStamina;
         this.currentMana = this.totalMana;
 
-        this.attackCost = [1, 2, 4];
+        this.attackCost = [1, 2, 3];
         this.staminaCost = [1, 2, 4];
         this.manaCost = [2, 4, 8];
     }
@@ -85,6 +85,7 @@ class PlayerEntity extends BaseEntity {
             let particle: BaseParticle = new BaseParticle(this.game,
                 e.getTilePosition().x, e.getTilePosition().y, "weapon" + this.selectedAttack);
             gameplay.layers[Layer.PARTICLE_LAYER].add(particle);
+            e.particle = particle;
 
             if(firstTime){
                 this.currentAttack -= this.attackCost[this.selectedAttack];
@@ -141,6 +142,7 @@ class PlayerEntity extends BaseEntity {
                         let particle: BaseParticle = new BaseParticle(this.game,
                             ep.x, ep.y, "mana" + this.selectedMana);
                         gameplayState.layers[Layer.PARTICLE_LAYER].add(particle);
+                        gameplayState.enemies[i].particle = particle;
                     }
                 }
                 break;
@@ -197,6 +199,7 @@ class PlayerEntity extends BaseEntity {
         if (this.currentMana > this.totalMana) {
             this.currentMana = this.totalMana;
         }
+        (<GameplayState>this.game.state.getCurrentState()).highChange = true;
     }
 
     healthRefresh():void{
@@ -260,8 +263,9 @@ class PlayerEntity extends BaseEntity {
                         if(gameplayState.tileMap.getSolid(playerTile.x + direction.x, playerTile.y + direction.y, false)){
                             break;
                         }
+                        let ep:Phaser.Point = gameplayState.enemies[i].getTilePosition();
                         if(p.equals(new Phaser.Point(playerTile.x + direction.x * j, playerTile.y + direction.y * j)) &&
-                            gameplayState.enemies[i].discovered){
+                            gameplayState.fogOfWar.getTile(ep.x, ep.y, gameplayState.fogOfWar.getLayerIndex("layer1")) == null){
                             this.attack(gameplayState.enemies[i]);
                             happen = true;
                             break;

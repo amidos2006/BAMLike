@@ -8,6 +8,7 @@ class GameplayState extends BaseState {
     enemies: BaseEnemyEntity[];
     treasures:BaseTreasureEntity[];
     exit:ExitEntity;
+    highChange:boolean;
 
     constructor() {
         super();
@@ -98,6 +99,7 @@ class GameplayState extends BaseState {
         super.create();
         PhasePunk.levelScore = 0;
         PhasePunk.level += 1;
+        this.highChange = false;
 
         let data = {
             "mapData": ["25x25", "solid:empty"],
@@ -321,8 +323,9 @@ class GameplayState extends BaseState {
                     this.enemies[i].stepUpdate();
                 }
             }
-            if(spacebar){
-                this.createNewEnemy(0.75);
+            if(this.highChange){
+                this.createNewEnemy(Phaser.Math.clamp(0.4 + Math.log(PhasePunk.level) * 0.4, 0, 0.75));
+                this.highChange = false;
             }
             else{
                 this.createNewEnemy(0.1);
@@ -344,7 +347,7 @@ class GameplayState extends BaseState {
                 i--;
             }
         }
-        this.createExit(20 + Math.log(PhasePunk.level) * 20);
+        this.createExit(15 + Math.log(PhasePunk.level) * 20);
     }
 
     render(): void {

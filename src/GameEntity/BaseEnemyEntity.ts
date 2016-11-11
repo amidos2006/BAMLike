@@ -4,6 +4,7 @@ class BaseEnemyEntity extends BaseEntity{
     health:number;
     discovered:boolean;
     frozen:number;
+    particle:BaseParticle;
     private frozenImage:Phaser.Image;
 
     constructor(game:Phaser.Game, xTile:number, yTile:number, health:number){
@@ -23,6 +24,7 @@ class BaseEnemyEntity extends BaseEntity{
         this.frozenImage.anchor.set(0.5, 0.5);
         this.frozenImage.alpha = 0;
         this.add(this.frozenImage);
+        this.particle = null;
     }
 
     move(direction:Phaser.Point):void{
@@ -82,6 +84,11 @@ class BaseEnemyEntity extends BaseEntity{
         }
         else{
             this.move(direction);
+        }
+        if(this.particle != null){
+            this.particle.x = this.x;
+            this.particle.y = this.y;
+            this.particle = null;
         }
     }
 

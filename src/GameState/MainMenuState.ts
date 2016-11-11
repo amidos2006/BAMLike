@@ -25,10 +25,10 @@ class MainMenuState extends BaseState{
 
         style = { font: "8px pixelFont", fill: "rgb(192,235,211)", align: "center" };
         text = new Phaser.Text(this.game, text.x, text.y + 24, "Arrows - Move or Attack\n" +
-            "Space - Wait (recharge with higher spawning chances)\n" + 
-            "S - Cast spell\n" +
-            "A - Change the attack\n" +
-            "D - Change the spell", style);
+            "Space - Restore 1 point with higher enemy spawning chances\n" + 
+            "S - Cast the selected spell\n" +
+            "A - Change the current attack\n" +
+            "D - Change the current spell", style);
         text.anchor.set(0.5, 0);
         this.add.existing(text);
 
@@ -54,7 +54,7 @@ class MainMenuState extends BaseState{
         image = new Phaser.Image(this.game, text.x, text.y + 24, "weapon2");
         image.anchor.set(1, 0.5);
         this.add.existing(image);
-        text = new Phaser.Text(this.game, image.x, image.y + 2, " Attack around (Cost: 4 Atk)", style);
+        text = new Phaser.Text(this.game, image.x, image.y + 2, " Attack around (Cost: 3 Atk)", style);
         text.anchor.set(0, 0.5);
         this.add.existing(text);
 
@@ -92,7 +92,7 @@ class MainMenuState extends BaseState{
         image = new Phaser.Image(this.game, text.x + text.width/2, text.y - 2, "exit");
         image.anchor.set(0, 0.5);
         this.add.existing(image);
-        text = new Phaser.Text(this.game, text.x, text.y + 16, " Restore from 2 to 4 points ", style);
+        text = new Phaser.Text(this.game, text.x, text.y + 16, " Restore from 2 to 4 points and health ", style);
         text.anchor.set(0.5, 0.5);
         this.add.existing(text);
         image = new Phaser.Image(this.game, text.x - text.width/2, text.y - 4, "chest0");
