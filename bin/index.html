@@ -23,6 +23,9 @@
         }
         #content{
             zoom: 1;
+            position: absolute;
+            top: 0px;
+            left: 0px;
         }
         canvas{
             image-rendering: optimizeSpeed;             /* Older versions of FF          */
@@ -31,10 +34,12 @@
             image-rendering: -o-crisp-edges;            /* OS X & Windows Opera (12.02+) */
             image-rendering: pixelated;                 /* Awesome future-browsers       */
             -ms-interpolation-mode: nearest-neighbor;   /* IE                            */
-            border: solid 2px #000;
+            /*border: solid 2px #000;*/
         }
         body{
             background-color: #333;
+            padding: 0px;
+            border: 0px;
         }
     </style>
     <script src="js/phaser.js"></script>
@@ -43,7 +48,7 @@
 </head>
 <body>
     <div class="fontPreload" style="font-family: pixelFont;">.</div>
-    <div align="center" id="content"></div>
+    <div id="content"></div>
     <script type="text/javascript">
         window.addEventListener('keydown', function(e) {
             if (e.keyCode > -1) {
