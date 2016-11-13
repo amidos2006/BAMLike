@@ -75,6 +75,7 @@ class PlayerEntity extends BaseEntity {
         let particle: BaseParticle = new BaseParticle(this.game,
             tilePosition.x, tilePosition.y, "mana0", 2);
         let gameplay: GameplayState = <GameplayState>this.game.state.getCurrentState();
+        PhasePunk.soundManager.playSound("death");
 
         super.destroy();
     }

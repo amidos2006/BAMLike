@@ -50,6 +50,8 @@ class LoadingState extends Phaser.State{
         this.game.load.audio("move2", "assets/sfx/Footstep 2.wav");
         this.game.load.audio("move3", "assets/sfx/Footstep 3.wav");
         this.game.load.audio("move4", "assets/sfx/Footstep 4.wav");
+        this.game.load.audio("treasure", "assets/sfx/Treasure Fanfare.wav");
+        this.game.load.audio("death", "assets/sfx/Death Fanfare.wav");
     }
 
     update(){
