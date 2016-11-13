@@ -36,11 +36,25 @@ class LoadingState extends Phaser.State{
         this.game.load.image("chest1", "assets/graphics/objects/chest01.png");
 
         this.game.load.image("exit", "assets/graphics/objects/step00.png");
+
+        this.game.load.audio("attack0", "assets/sfx/Sword Hit.wav");
+        this.game.load.audio("attack1", "assets/sfx/Arrow Hit.wav");
+        this.game.load.audio("attack2", "assets/sfx/Axe Hit.wav");
+        this.game.load.audio("spell0", "assets/sfx/Blink Spell.wav");
+        this.game.load.audio("spell1", "assets/sfx/Ice Spell.wav");
+        this.game.load.audio("spell2", "assets/sfx/Fire Spell.wav");
+        this.game.load.audio("monster1", "assets/sfx/Monster Attack 1.wav");
+        this.game.load.audio("monster2", "assets/sfx/Monster Attack 2.wav");
+        this.game.load.audio("monster3", "assets/sfx/Monster Attack 3.wav");
+        this.game.load.audio("move1", "assets/sfx/Footstep 1.wav");
+        this.game.load.audio("move2", "assets/sfx/Footstep 2.wav");
+        this.game.load.audio("move3", "assets/sfx/Footstep 3.wav");
+        this.game.load.audio("move4", "assets/sfx/Footstep 4.wav");
     }
 
     update(){
         PhasePunk.initialize(this.game);
-        PhasePunk.loadGame();
+        // PhasePunk.loadGame();
         
         this.game.state.start("MainMenu", true);
     }

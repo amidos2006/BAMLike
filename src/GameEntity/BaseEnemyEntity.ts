@@ -6,6 +6,7 @@ class BaseEnemyEntity extends BaseEntity{
     frozen:number;
     particle:BaseParticle;
     private frozenImage:Phaser.Image;
+    private soundName:string;
 
     constructor(game:Phaser.Game, xTile:number, yTile:number, health:number){
         super(game);
@@ -19,6 +20,7 @@ class BaseEnemyEntity extends BaseEntity{
         this.add(image);
         this.discovered = false;
         this.frozen = 0;
+        this.soundName = "monster" + health;
 
         this.frozenImage = new Phaser.Image(game, 0, 0, "frozen");
         this.frozenImage.anchor.set(0.5, 0.5);
@@ -46,6 +48,7 @@ class BaseEnemyEntity extends BaseEntity{
     attack():void{
         let gameplayState:GameplayState = <GameplayState>this.game.state.getCurrentState();
         gameplayState.player.takeDamage(1);
+        PhasePunk.soundManager.playSound(this.soundName);
     }
 
     stepUpdate():void{

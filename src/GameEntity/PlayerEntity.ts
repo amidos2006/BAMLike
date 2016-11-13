@@ -89,6 +89,7 @@ class PlayerEntity extends BaseEntity {
 
             if(firstTime){
                 this.currentAttack -= this.attackCost[this.selectedAttack];
+                PhasePunk.soundManager.playSound("attack" + this.selectedAttack);
             }
             e.takeDamage(1);
         }
@@ -105,6 +106,7 @@ class PlayerEntity extends BaseEntity {
         let tilePosition:Phaser.Point = this.getTilePosition();
         if (this.currentMana >= this.manaCost[this.selectedMana]) {
             this.currentMana -= this.manaCost[this.selectedMana];
+            PhasePunk.soundManager.playSound("spell" + this.selectedMana);
             switch(this.selectedMana){
                 case 0:
                 let p:Phaser.Point[] = [];
@@ -173,6 +175,9 @@ class PlayerEntity extends BaseEntity {
         //         return;
         //     }
         // }
+        if(direction.x != 0 || direction.y != 0){
+            PhasePunk.soundManager.playSound("move" + this.game.rnd.integerInRange(1, 4));
+        }
         this.x += direction.x * PhasePunk.TILE_SIZE;
         this.y += direction.y * PhasePunk.TILE_SIZE;
     }
