@@ -302,6 +302,7 @@ class GameplayState extends BaseState {
 
         if (direction.x != 0 || direction.y != 0 || spacebar || spell) {
             if (spacebar) {
+                PhasePunk.soundManager.playSound("rest");
                 this.player.refresh();
             }
             else if(spell){

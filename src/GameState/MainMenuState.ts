@@ -155,6 +155,7 @@ class MainMenuState extends BaseState{
 
         if(this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){
             this.game.state.start("Gameplay");
+            PhasePunk.soundManager.playSound("start");
             PhasePunk.newGame();
             this.game.input.reset();
         }

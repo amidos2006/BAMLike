@@ -98,6 +98,7 @@ class PlayerEntity extends BaseEntity {
             let particle:TextParticle = new TextParticle(this.game,
                 gameplay.player.getTilePosition().x, gameplay.player.getTilePosition().y, "no strength");
             gameplay.layers[Layer.PARTICLE_LAYER].add(particle);
+            PhasePunk.soundManager.playSound("rest");
         }
     }
 
@@ -297,6 +298,7 @@ class PlayerEntity extends BaseEntity {
                 PlayerEntity.attackValue = this.currentAttack;
                 PlayerEntity.manaValue = this.currentMana;
 
+                PhasePunk.soundManager.playSound("win");
                 this.game.state.start("Gameplay");
             }
         }
@@ -305,6 +307,7 @@ class PlayerEntity extends BaseEntity {
                 this.move(direction);
             }
             else{
+                PhasePunk.soundManager.playSound("rest");
                 this.refresh();
             }
         }

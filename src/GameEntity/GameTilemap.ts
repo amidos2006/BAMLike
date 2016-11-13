@@ -62,6 +62,6 @@ class GameTilemap extends Phaser.Tilemap{
         if(x >= 0 && y >= 0 && x < this.getWidth() && y < this.getHeight()){
             return this.solid[y][x];
         }
-        return false;
+        return true;
     }
 }
