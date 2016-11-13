@@ -92,7 +92,7 @@ class MainMenuState extends BaseState{
         image = new Phaser.Image(this.game, text.x + text.width/2, text.y - 2, "exit");
         image.anchor.set(0, 0.5);
         this.add.existing(image);
-        text = new Phaser.Text(this.game, text.x, text.y + 16, " Restore from 2 to 4 points and health ", style);
+        text = new Phaser.Text(this.game, text.x, text.y + 16, " Restore from 2 to 4 points, health, and score ", style);
         text.anchor.set(0.5, 0.5);
         this.add.existing(text);
         image = new Phaser.Image(this.game, text.x - text.width/2, text.y - 4, "chest0");
@@ -142,6 +142,8 @@ class MainMenuState extends BaseState{
         this.game.time.add(timer);
         timer.loop(400, this.flicker, this);
         timer.start();
+
+        PhasePunk.musicTrack.play("", 0, SoundManager.MUSIC_VOLUME, true);
     }
 
     flicker():void{

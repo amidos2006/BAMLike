@@ -52,6 +52,13 @@ class LoadingState extends Phaser.State{
         this.game.load.audio("move4", "assets/sfx/Footstep 4.wav");
         this.game.load.audio("treasure", "assets/sfx/Treasure Fanfare Fix.wav");
         this.game.load.audio("death", "assets/sfx/Death Fanfare.wav");
+
+        this.game.load.audio("music", "assets/music/Background Theme.wav");
+
+        let style = { font: "8px pixelFont", fill: "rgb(60,160,106)", align: "center" };
+        let text:Phaser.Text = new Phaser.Text(this.game, this.game.width/2, this.game.height/2, "Loading...", style);
+        text.anchor.set(0.5, 0.5);
+        this.add.existing(text);
     }
 
     update(){

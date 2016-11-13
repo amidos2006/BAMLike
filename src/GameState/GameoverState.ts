@@ -14,6 +14,10 @@ class GameoverState extends BaseState{
         this.add.existing(text);
 
         style = { font: "8px pixelFont", fill: "rgb(60,160,106)", align: "center" };
+        text = new Phaser.Text(this.game, text.x, text.y + 24, "Level: " + PhasePunk.level + " - Score: " + PhasePunk.score, style);
+        text.anchor.set(0.5, 0.5);
+        this.add.existing(text);
+
         this.spaceFlicker = new Phaser.Text(this.game, text.x, text.y + 24, "Press Space to restart", style);
         this.spaceFlicker.anchor.set(0.5, 0.5);
         this.add.existing(this.spaceFlicker);

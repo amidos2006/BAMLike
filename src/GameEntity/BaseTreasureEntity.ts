@@ -30,6 +30,8 @@ class BaseTreasureEntity extends BaseEntity{
             gameplay.player.refresh();
             gameplay.player.healthRefresh();
         }
+        PhasePunk.score += randomValue;
+        PhasePunk.levelScore += randomValue;
         PhasePunk.soundManager.playSound("treasure");
     }
 

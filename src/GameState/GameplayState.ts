@@ -333,6 +333,10 @@ class GameplayState extends BaseState {
         }
         if (this.player.currentHealth <= 0) {
             this.player.destroy();
+            
+            PhasePunk.soundManager.playSound("death");
+            PhasePunk.musicTrack.stop();
+
             let timer:Phaser.Timer = new Phaser.Timer(this.game);
             timer.repeat(1200, 1, ()=>{this.game.state.start("Gameover");}, this);
             this.game.time.add(timer);

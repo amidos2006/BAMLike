@@ -1,8 +1,8 @@
 class SoundManager{
     static MAX_MUSIC:number=0;
 
-    static MUSIC_VOLUME:number = 0.75;
-    static SOUND_VOLUME:number = 0.2;
+    static MUSIC_VOLUME:number = 0.2;
+    static SOUND_VOLUME:number = 0.3;
     
     sound:boolean;
     music:boolean;

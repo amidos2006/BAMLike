@@ -2,6 +2,7 @@ class PhasePunk{
     static TILE_SIZE:number = 16;
 
     static soundManager:SoundManager;
+    static musicTrack:Phaser.Sound;
     static game:Phaser.Game;
     static score:number;
     static levelScore:number;
@@ -10,6 +11,7 @@ class PhasePunk{
     static initialize(game:Phaser.Game):void{
         PhasePunk.soundManager = new SoundManager(game);
         PhasePunk.game = game;
+        PhasePunk.musicTrack = game.add.audio("music");
     }
 
     static newGame():void{
