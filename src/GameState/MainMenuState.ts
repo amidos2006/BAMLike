@@ -129,6 +129,15 @@ class MainMenuState extends BaseState{
         image.anchor.set(0, 0.5);
         this.add.existing(image);
 
+        style = { font: "8px pixelFont", fill: "rgb(60,160,106)", align: "right" };
+        text = new Phaser.Text(this.game, this.game.width - 5, this.game.height, "#procjam", style);
+        text.anchor.set(1, 1);
+        this.add.existing(text);
+        style = { font: "8px pixelFont", fill: "rgb(60,160,106)", align: "left" };
+        text = new Phaser.Text(this.game, 5, this.game.height, "Game by Amidos\nSound & Music by Mark Benis", style);
+        text.anchor.set(0, 1);
+        this.add.existing(text);
+
         let timer:Phaser.Timer = new Phaser.Timer(this.game);
         this.game.time.add(timer);
         timer.loop(400, this.flicker, this);
