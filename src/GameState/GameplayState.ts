@@ -185,6 +185,13 @@ class GameplayState extends BaseState {
             }
         }
 
+        
+        if(playerPos.x == 0 && playerPos.y == 0){
+            let list:Phaser.Point[] = this.getListOfEmptySpots();
+            let index = this.game.rnd.integerInRange(0, list.length - 1);
+            playerPos.x = list[index].x;
+            playerPos.y = list[index].y;
+        }
         this.player = new PlayerEntity(this.game, playerPos.x, playerPos.y);
         // if(PhasePunk.level > 1){
         //     this.player.currentAttack = PlayerEntity.healthValue;
