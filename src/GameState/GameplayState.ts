@@ -185,7 +185,6 @@ class GameplayState extends BaseState {
             }
         }
 
-        
         if(playerPos.x == 0 && playerPos.y == 0){
             let list:Phaser.Point[] = this.getListOfEmptySpots();
             let index = this.game.rnd.integerInRange(0, list.length - 1);
@@ -228,7 +227,7 @@ class GameplayState extends BaseState {
         let ps:Phaser.Point[] = [];
         for(let x:number=0; x<this.tileMap.getWidth(); x++){
             for(let y:number=0; y<this.tileMap.getHeight(); y++){
-                if(!this.tileMap.getSolid(x, y) && !this.player.getTilePosition().equals(new Phaser.Point(x, y)) && 
+                if(!this.tileMap.getSolid(x, y) && (this.player == null || !this.player.getTilePosition().equals(new Phaser.Point(x, y))) && 
                     this.fogOfWar.getTile(x, y, this.fogOfWar.getLayerIndex("layer1")) == null){
                     ps.push(new Phaser.Point(x, y));
                 }
